@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>파일 확장자 차단</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+<h1>파일 확장자 차단</h1>
+
+<h2>고정 확장자</h2>
+<div id="fixed-list"></div>
+
+<h2>커스텀 확장자</h2>
+<input type="text" id="custom-input" placeholder="확장자 입력 (20자 이내)">
+<button id="add-custom">추가</button>
+<div id="custom-list"></div>
+
+<script>
+    function loadFixed() {
+      $.get("/api/fixed", function(data) {
+        $("#fixed-list").empty();
+        data.forEach(function(item) {
+          const chk = $("<input type='checkbox'>").prop("checked", item.checked);
+          chk.change(() => {
+            $.ajax({
+              url: "/api/fixed",
+              type: "PATCH",
+              contentType: "application/json",
+              data: JSON.stringify({name: item.name, checked: chk.is(":checked")})
+            });
+          });
+          $("#fixed-list").append($("<div>").append(chk).append(" " + item.name));
+        });
+      });
+    }
+
+    function loadCustom() {
+      $.get("/api/custom", function(data) {
+        $("#custom-list").empty();
+        data.forEach(function(item) {
+          const del = $("<button>X</button>").click(() => {
+            $.ajax({ url: "/api/custom/" + item.id, type: "DELETE", success: loadCustom });
+          });
+          $("#custom-list").append($("<div>").append(item.name + " ").append(del));
+        });
+      });
+    }
+
+    $("#add-custom").click(() => {
+      const name = $("#custom-input").val();
+      $.ajax({
+        url: "/api/custom",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({name}),
+        success: () => { $("#custom-input").val(""); loadCustom(); }
+      });
+    });
+
+    $(function() {
+      loadFixed();
+      loadCustom();
+    });
+</script>
+</body>
+</html>
