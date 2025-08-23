@@ -96,7 +96,7 @@ src
 
 1. **GitHub Repository 연결**
    - Railway 프로젝트를 생성하고, GitHub 레포 (`FileExtensionBlocking`)를 연결하여 CI/CD 파이프라인을 구성했습니다.
-   - main/develop 브랜치 push 시 자동 배포되도록 설정했습니다.
+   - master 브랜치 push 시 자동 배포되도록 설정했습니다.
 
 2. **MySQL 플러그인 추가**
    - Railway에서 MySQL 서비스 인스턴스를 추가했습니다.
