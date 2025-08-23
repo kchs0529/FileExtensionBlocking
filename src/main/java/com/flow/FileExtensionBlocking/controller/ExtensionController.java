@@ -34,6 +34,9 @@ public class ExtensionController {
     @DeleteMapping("/custom/{id}")
     public void del(@PathVariable Long id) { service.deleteCustom(id); }
 
+    @DeleteMapping("/custom/deleteAll")
+    public void deleteAll() { service.deleteAllCustom(); }
+
     @GetMapping("/validate")
     public Map<String,Object> validate(@RequestParam String filename) {
         boolean blocked = service.isBlocked(filename);

@@ -33,11 +33,12 @@ public class ExtensionService {
         return v.replaceAll("[^a-z0-9_+-]", "");
     }
 
-    // 확장자 이름 검증 (빈 문자열 또는 최대 길이 초과 시 예외 발생)
-    private void validateName(String name) {
-        String n = norm(name);
-        if (n.isEmpty() || n.length() > NAME_MAX)
-            throw new IllegalArgumentException("invalid-length");
+    // 확장자 이름 검증
+    private String validateName(String n) {
+        if (n.isEmpty() || n.length() > NAME_MAX) {
+            return "확장자 이름이 올바르지 않습니다";
+        }
+        return "ok";
     }
 
     // 고정 확장자 전체 조회
@@ -48,7 +49,6 @@ public class ExtensionService {
     // 고정 확장자 상태(checked) 변경
     public FixedExtension setFixed(String name, boolean checked) {
         String n = norm(name);
-        validateName(n);
         FixedExtension fe = fixedRepo.findByName(n).orElseThrow();
         fe.setChecked(checked);
         return fixedRepo.save(fe);
@@ -62,7 +62,10 @@ public class ExtensionService {
     // 커스텀 확장자 추가
     public String addCustom(String name) {
         String n = norm(name);
-        validateName(n);
+        String valid = validateName(n);
+        if (!"ok".equals(valid)) {
+            return valid; // "확장자 이름이 올바르지 않습니다"
+        }
         if (customRepo.count() >= CUSTOM_MAX) {
             return "200개를 초과하였습니다";
         }
@@ -78,6 +81,10 @@ public class ExtensionService {
     // 커스텀 확장자 삭제
     public void deleteCustom(Long id) {
         customRepo.deleteById(id);
+    }
+
+    public void deleteAllCustom(){
+        customRepo.deleteAllInBatch();
     }
 
     // 파일 확장자가 차단 대상인지 확인
