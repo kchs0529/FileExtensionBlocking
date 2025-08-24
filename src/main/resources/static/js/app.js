@@ -53,9 +53,9 @@ function customCount(){
 
 }
 
-//커스텀 추가 확장자 클릭
+//커스텀 확장자 추가 클릭
 $("#add-custom").click(() => {
-  const name = $("#custom-input").val();
+  const name = $("#custom-input").val().trim();
   if (name.length === 0){
       showDialog("확장자 이름을 입력해주세요");
       return;
